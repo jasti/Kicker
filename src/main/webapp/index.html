@@ -35,6 +35,23 @@ button {
 <!-- Load templates from template folder -->
 
 <script>
+	$(document).ready(function() {
+		$.ajax({
+			url : 'http://localhost:8124/',
+			dataType : "jsonp",
+			jsonpCallback : "_testcb",
+			cache : false,
+			timeout : 5000,
+			success : function(data) {
+				$("#test").append(data);
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				alert('error ' + textStatus + " " + errorThrown);
+			}
+		});
+	});
+</script>
+<script>
 	$(function() {
 		$("#navContent").load("navs.html");
 	});
@@ -71,8 +88,8 @@ button {
 		</div>
 	</div>
 
-	<div class="container">
-		<!-- 
+	<div class="container"></div>
+	<!-- 
 		<script type="text/javascript">
             $(function(){
                 alert('hi');
@@ -80,24 +97,26 @@ button {
         </script>
 
  -->
-		<!-- Example row of columns -->
-		<div class="row">
-			<div class="col-lg-4">
-				<h2>Heading</h2>
-				<p>Donec id elit non mi porta gravida at eget metus. Fusce
-					dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh,
-					ut fermentum massa justo sit amet risus. Etiam porta sem malesuada
-					magna mollis euismod. Donec sed odio dui.</p>
-				<p>
-					<a class="btn btn-default" href="#">View details &raquo;</a>
-				</p>
-			</div>
-
+	<!-- Example row of columns -->
+	<div class="row">
+		<div class="col-lg-4">
+			<h2>Heading</h2>
+			<p>Donec id elit non mi porta gravida at eget metus. Fusce
+				dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh,
+				ut fermentum massa justo sit amet risus. Etiam porta sem malesuada
+				magna mollis euismod. Donec sed odio dui.</p>
+			<p>
+				<a class="btn btn-default" href="#">View details &raquo;</a>
+			</p>
 		</div>
 
-		<div id="footerContent"></div>
+		<div class="test"></div>
 
-		<hr>
-		<hr>
+	</div>
+
+	<div id="footerContent"></div>
+
+	<hr>
+	<hr>
 </body>
 </html>
