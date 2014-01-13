@@ -14,47 +14,12 @@ public class KickerServerTest {
 
 		// for (int i = 0; i < 20; i++) {
 		ClientResource client = new ClientResource("http://localhost:8083/");
-		//client.post(null).write(System.out);
-		Representation representation = client.post(null);
-		
-		String myString = getStringFromInputStream(representation.getStream());
-		
-		System.out.println(myString);
+		client.post(null).write(System.out);
+	
 		// }
 
 	}
 	
-	// convert InputStream to String
-		private static String getStringFromInputStream(InputStream is) {
-	 
-			BufferedReader br = null;
-			StringBuilder sb = new StringBuilder();
-	 
-			String line;
-			try {
-	 
-				br = new BufferedReader(new InputStreamReader(is));
-				while ((line = br.readLine()) != null) {
-					sb.append(line);
-				}
-	 
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
-				if (br != null) {
-					try {
-						br.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-	 
-			return sb.toString();
-	 
-		}
-	 
-		
 		
 
 }

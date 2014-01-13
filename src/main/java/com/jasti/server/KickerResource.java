@@ -1,16 +1,10 @@
 package com.jasti.server;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.io.PrintWriter;
+import java.io.InputStream;
 
-import org.restlet.data.MediaType;
-import org.restlet.representation.OutputRepresentation;
+import org.restlet.data.Form;
 import org.restlet.representation.Representation;
-import org.restlet.representation.Variant;
 import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
 
@@ -23,38 +17,55 @@ public class KickerResource extends ServerResource {
 	XStream xstreamJson = new XStream(new JsonHierarchicalStreamDriver());
 
 	XStream xstream = new XStream(new DomDriver());
-	
+
 	@Post
-	public Representation represent(Variant variant) throws IOException {
-		{
+	public String executeCommand(Representation entity) {
 
-			final PipedInputStream pi = new PipedInputStream();
-			PipedOutputStream po = new PipedOutputStream(pi);
-			Representation ir = new OutputRepresentation(MediaType.TEXT_PLAIN) {
+		Form form = new Form(entity);
 
-				@Override
-				public void write(OutputStream realOutput) throws IOException {
-					byte[] b = new byte[8];
-					int read;
-					while ((read = pi.read(b)) != -1) {
-						realOutput.write(b, 0, read);
-						realOutput.flush();
+		String key = form.getFirstValue("key");
+
+		String command = key;
+		return executeCommand(command);
+
+	}
+
+	private String executeCommand(String command) {
+
+		System.out.println("Printing command :" + command);
+		final StringBuffer output = new StringBuffer();
+
+		Process p;
+		try {
+			p = Runtime.getRuntime().exec(command);
+			final InputStream pOut = p.getInputStream();
+			Thread outputDrainer = new Thread() {
+				public void run() {
+					try {
+						int c;
+						do {
+							c = pOut.read();
+							if (c >= 0)
+								output.append((char) c);
+						} while (c >= 0);
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
 				}
 			};
-			OutputStreamWriter ow = new OutputStreamWriter(po);
-			PrintWriter out = new PrintWriter(ow, true);
+			outputDrainer.start();
 
-			// ...
+			p.waitFor();
 
-			try {
-				new Thread(new CommandRunner(out)).start();
-				return ir;
-			} catch (Exception e) {
-				// return some error representation
-			}
-			return null;
+			// Sleep for 2 seconds,
+			// so the output buffer can be populated with the output from the
+			// command execution
+			Thread.sleep(2000);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+
+		return output.toString();
 
 	}
 }
